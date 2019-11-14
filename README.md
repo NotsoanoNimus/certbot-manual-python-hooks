@@ -1,11 +1,12 @@
-# certbot-manual-dns-python-hooks
-Some python-based hooks (auth and cleanup) for DNS-based manual LetsEncrypt certificates.
+# certbot-manual-python-hooks
+Some python-based hooks (auth and cleanup) for manual LetsEncrypt certificates.
 
 These hooks will allow you to set up a cron-job to automatically renew your LetsEncrypt certificates with the certbot tool.
 
 
 # Special Notes (Important)
-+ More support for other DNS providers will be added in the future, as the APIs are integrated.
++ There is **no HTTP validation support** at this time.
++ More support for other DNS providers will be added in the future, as the APIs are integrated and tested.
 + _14 Nov. 2019_ : **CloudFlare** support is not yet functional.
 + When running the "cleanup" hook for the _GoDaddy_ API, it doesn't delete the record, but instead changes its content to `null`. This is frankly annoying, and I am hoping to find a fix soon to clean this up. It's not necessarily a _problem_ though because the API object can UPDATE records, and doesn't have to worry about whether or not the record already exists. :)
 
