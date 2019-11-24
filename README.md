@@ -58,9 +58,6 @@ DNS_UPDATE_TIMER = 30
 ```
 The _keychain_ contains all of the authentication-related information for the target provider's API.
 
-In the above case, you'll see that the `API_KEY` and `API_SECRET` fields are the only ones populated, because the target API will be _GoDaddy_ in my example, as evidenced by the `DNS_API_TARGET` field. If I was instead targeting _CloudFlare_, then only `API_KEY` and `API_EMAIL` would be necessary.
-
-**NOTE**: In future revisions, it is planned to somehow allow a mix of target APIs that would obsolete the `DNS_API_TARGET` so that parts of the keychain can be dynamically used. This will be addressed as it's developed.
 
 ### Applying the hooks
 When obtaining new certificates (or renewing) with Certbot, you can use the hooks like so:
