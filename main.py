@@ -1,57 +1,36 @@
 #!/bin/python3
 #
-# cb-hook.py
+# main.py
 #
-#   Automatically set up Certbot authorizations for new and renewing SSL certificates from LetsEncrypt.
-#   The only required parameters to be set are as follows:
-#       API_KEY: The API access key given to you by your provider (if using DNS challenges)
-#       API_SECRET: The API secret key given to you by your provider (again, if using DNS challenges)
+#   Contributors:
+#       Notsoano Nimus <postmaster@thestraightpath.email>
+#   Repo:
+#       https://github.com/NotsoanoNimus/certbot-manual-python-hooks
+#   Description:
+#       Automatically set up Certbot authorizations for new and renewing SSL certificates from LetsEncrypt.
+#       Parameters in the accompanying settings.py file are required to be set before running these hooks.
 #
-import sys, os, re, requests, json, datetime, time
-from dns_apis import DNS_API_CLIENT, GoDaddyAPIClient, CloudFlareAPIClient
-from settings import *
-#from worker import CertbotWorker
-
-
-""" Constants, classes, helper methods, and other definitions. """
-
-# Define a certbot class to hold methods and information about certbot validation attempts.
-class CertbotWorker:
-    # Define a constructor that initializes instance fields based on the information provided.
-    def __init__(self, fqdn, validation_code, hook_type=None, auth_type=None, http_token=None):
-        self.is_cleanup = (hook_type == 'cleanup')
-        self.type = auth_type
-        self.token = http_token
-        self.api = DNS_API_CLIENT[DNS_API_TARGET](DNS_API_KEYCHAIN, fqdn, validation_code, self._write_to_log)
-        self.log_file = open(LOGGING_DIR + ('/certbot-{}.log'.format(self.api.base_domain)), 'a+')
-        # Take note of the request and worker object instantiation.
-        self._write_to_log("CertbotWorker constructed [%s]: %s (%s): %s, %s, %s" %
-            (hook_type, fqdn, self.api.base_domain, validation_code, auth_type, http_token if http_token is not None else '{no-http-token}'))
-
-    # A wrapper/helper method to output information to the domain's logfile.
-    def _write_to_log(self, message):
-        if DEBUG == False:
-            print("{} ::: {}".format(datetime.datetime.now(), message), file=self.log_file)
-        else:
-            print("[DEBUG] {} ::: {}".format(datetime.datetime.now(), message))
-
-    # DNS validation calls (wrapper method for the worker).
-    def dns_validation(self):
-        # Create the record, or clean it up.
-        self.api.add_or_update_record(set_null=self.is_cleanup)
-        # Sleep/Wait at least 30 seconds for record propagation (when it's an AUTH hook type).
-        if self.is_cleanup == False:
-            if DEBUG == False:
-                time.sleep(30)
-            else:
-                time.sleep(2)
-        return None
-
-    # HTTP validation calls (not yet implemented).
-    def http_validation(self):
-        return None
-
-
+######################################################################################
+# Copyright (C) 2019 "Notsoano Nimus", as a free software project
+#  licensed under GNU GPLv3.
+#
+# This program is free software: you can redistribute it and/or modify it under
+#  the terms of the GNU General Public License as published by the Free Software
+#  Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+#  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+#  FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with
+#  this program. If not, see https://www.gnu.org/licenses/.
+######################################################################################
+#
+#
+#
+""" MAIN.PY - The main file to run directly from the python interpreter with the appropriate parameters. """
+import sys, re
+from certbot_worker import CertbotWorker
 
 
 """ Define the main function used to run the auth/cleanup hooks. """
@@ -61,7 +40,7 @@ def main():
         sys.exit("The manual hook didn't receive the appropriate parameters. Aborting.")
 
     certbot_info = sys.argv[1].strip()
-    # The expected Certbot parameter should be in this format: "F.Q.D.N. acme-token [dns|http] [token]"
+    # The expected Certbot parameter should be in this format: "F.Q.D.N. acme-token {auth|cleanup} [token]"
     if not bool(re.fullmatch(r'\s*(([-\w]+\.)*([a-z0-9\-]+)\.[a-z0-9]{2,})\s+([^\s]+\s+(auth|cleanup))\s*(\s+[^\s]+\s*)?', certbot_info, flags=re.IGNORECASE)):
         sys.exit("The manual hook didn't receive the appropriate parameters. Aborting.")
 
@@ -73,12 +52,14 @@ def main():
         cb_obj = CertbotWorker(cb_pms[0], cb_pms[1], hook_type=cb_pms[2], 
             auth_type='dns' if len(cb_pms) == 3 else 'http', http_token=None if len(cb_pms) == 3 else cb_pms[3])
     except:
+        import logging, traceback
+        logging.error(traceback.format_exc())
         sys.exit("Could not construct the certbot worker: the given paramters are NOT valid!")
 
     # Perform the validation.
     print("Using python '%s' certbot hook for domain '%s'..." % (cb_pms[2], cb_obj.api.base_domain))
     if cb_obj.type == 'dns':
-        cb_obj.dns_validation()
+        worker_result = cb_obj.dns_validation()
     else:
         cb_obj.http_validation()
 
