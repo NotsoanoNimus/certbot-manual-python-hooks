@@ -3,7 +3,7 @@
 # dns_apis.py
 #
 #   Contributors:
-#       Notsoano Nimus <postmaster@thestraightpath.email>
+#       Notsoano Nimus <github@xmit.xyz>
 #   Repo:
 #       https://github.com/NotsoanoNimus/certbot-manual-python-hooks
 #   Description:
@@ -11,7 +11,7 @@
 #       Parameters in the accompanying settings.py file are required to be set before running these hooks.
 #
 ######################################################################################
-# Copyright (C) 2019 "Notsoano Nimus", as a free software project
+# Copyright (C) 2021 @NotsoanoNimus on GitHub, as a free software project
 #  licensed under GNU GPLv3.
 #
 # This program is free software: you can redistribute it and/or modify it under
@@ -56,7 +56,7 @@ class BaseAPIClient:
             self.base_domain = re.search(r'([^\.]+\.[a-zA-Z0-9]{2,})$', fqdn).groups()[0]
         except:
             self.base_domain = fqdn
-        subdomains = re.match(r'^(([-\w]+\.)*)(?:[a-z0-9\-]+\.[a-z0-9]{2,})$', fqdn, flags=re.IGNORECASE)
+        subdomains = re.match(r'^(([-\w]+\.)+)(?:[a-z0-9\-]+\.[a-z0-9]{2,})$', fqdn, flags=re.IGNORECASE)
         try:
             # If there is a subdomain captured, get the first item from the tuple, and cut off the trailing '.' character.
             self.subdomain = subdomains.groups()[0][:-1]
@@ -117,7 +117,6 @@ class BaseAPIClient:
 
 
 
-
 """ Define BaseAPIClient subclasses for specific DNS APIs. """
 # GoDaddy: COMPLETE (deletion methods in progress, however)
 # CloudFlare: COMPLETE
@@ -128,7 +127,7 @@ class GoDaddyAPIClient(BaseAPIClient):
     # GoDaddy base settings, which remain consistent despite changing environments.
     __GODADDY_API_BASE = 'https://api.godaddy.com/'
     __GODADDY_AUTH_HEADERS_BASE = {
-        'Authorization' : None, #'sso-key {}:{}'.format(API_KEY, API_SECRET),
+        'Authorization' : None,   #see self.__init__
         'Accept'        : 'application/json',
         'Content-Type'  : 'application/json',
     }

@@ -3,7 +3,7 @@
 # settings.py
 #
 #   Contributors:
-#       Notsoano Nimus <postmaster@thestraightpath.email>
+#       Notsoano Nimus <github@xmit.xyz>
 #   Repo:
 #       https://github.com/NotsoanoNimus/certbot-manual-python-hooks
 #   Description:
@@ -11,7 +11,7 @@
 #       Parameters in the accompanying settings.py file are required to be set before running these hooks.
 #
 ######################################################################################
-# Copyright (C) 2019 "Notsoano Nimus", as a free software project
+# Copyright (C) 2021 @NotsoanoNimus on GitHub, as a free software project
 #  licensed under GNU GPLv3.
 #
 # This program is free software: you can redistribute it and/or modify it under
@@ -47,9 +47,10 @@ DNS_API_KEYCHAIN = {
 
 # The target DNS service for which an API client will be constructed and used.
 # TODO: Find a way to automate this on a per-domain basis, or pass it in somehow.
+#        An easy idea to toy with could be K:V pairs of DOMAIN:PROVIDER in the `renewals.txt` file.
 # Options:
 #   godaddy, cloudflare
-DNS_API_TARGET = 'cloudflare'
+DNS_API_TARGET = ''
 
 
 # Where to store logs for the DNS API transactions.

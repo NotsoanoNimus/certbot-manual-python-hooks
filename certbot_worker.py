@@ -3,7 +3,7 @@
 # certbot_worker.py
 #
 #   Contributors:
-#       Notsoano Nimus <postmaster@thestraightpath.email>
+#       Notsoano Nimus <github@xmit.xyz>
 #   Repo:
 #       https://github.com/NotsoanoNimus/certbot-manual-python-hooks
 #   Description:
@@ -11,7 +11,7 @@
 #       Parameters in the accompanying settings.py file are required to be set before running these hooks.
 #
 ######################################################################################
-# Copyright (C) 2019 "Notsoano Nimus", as a free software project
+# Copyright (C) 2021 @NotsoanoNimus on GitHub, as a free software project
 #  licensed under GNU GPLv3.
 #
 # This program is free software: you can redistribute it and/or modify it under
